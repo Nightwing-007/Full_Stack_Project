@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +26,26 @@ public class UserService {
 
     @Autowired
     private RecipeService recipeService;
+
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        // Prevent admin from deleting themselves
+        String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (user.getEmail().equals(currentEmail)) {
+            throw new RuntimeException("Cannot delete your own admin account");
+        }
+
+        userRepository.delete(user);
+    }
 
     public UserDto getCurrentUserProfile() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
