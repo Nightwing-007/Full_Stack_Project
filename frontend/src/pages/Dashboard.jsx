@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import RecipeCard from '../components/RecipeCard';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
@@ -22,43 +23,106 @@ const Dashboard = () => {
     fetchProfile();
   }, []);
 
-  if (loading) return <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div></div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32">
+        <div className="relative w-20 h-20">
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-orange-100 rounded-full"></div>
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-orange-500 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <p className="mt-6 text-gray-400 font-bold animate-pulse">Loading your kitchen...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-12">
-      <div className="bg-white rounded-3xl p-8 shadow-lg flex items-center space-x-6">
-        <div className="h-24 w-24 bg-orange-100 rounded-full flex items-center justify-center text-4xl text-orange-600 font-bold">
-          {profile.name[0]}
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">{profile.name}</h1>
-          <p className="text-gray-500">{profile.email} • <span className="capitalize">{profile.role.toLowerCase()}</span></p>
+    <div className="space-y-16 pb-20">
+      {/* Profile Header */}
+      <div className="bg-white rounded-[3rem] p-10 md:p-12 shadow-2xl border border-gray-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-50"></div>
+        
+        <div className="relative flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-10 text-center md:text-left">
+          <div className="h-32 w-32 bg-orange-500 rounded-[2.5rem] flex items-center justify-center text-5xl text-white font-black shadow-xl shadow-orange-200 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+            {profile.name[0]}
+          </div>
+          <div className="flex-1 space-y-2">
+            <div className="flex flex-col md:flex-row md:items-center gap-4">
+              <h1 className="text-4xl font-black text-gray-900 tracking-tight">{profile.name}</h1>
+              <span className="inline-block px-4 py-1.5 text-xs font-black uppercase bg-gray-900 text-white rounded-full tracking-widest w-fit mx-auto md:mx-0">
+                {profile.role}
+              </span>
+            </div>
+            <p className="text-gray-500 text-lg font-medium">{profile.email}</p>
+            <div className="flex items-center justify-center md:justify-start space-x-6 mt-4 pt-4 border-t border-gray-50">
+              <div className="text-center md:text-left">
+                <span className="block text-2xl font-black text-gray-900">{profile.createdRecipes?.length || 0}</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Recipes</span>
+              </div>
+              <div className="w-px h-8 bg-gray-100"></div>
+              <div className="text-center md:text-left">
+                <span className="block text-2xl font-black text-gray-900">{profile.favoriteRecipes?.length || 0}</span>
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Favorites</span>
+              </div>
+            </div>
+          </div>
+          <Link
+            to="/add-recipe"
+            className="bg-orange-500 text-white px-8 py-4 rounded-2xl font-black text-lg hover:bg-orange-600 shadow-xl shadow-orange-100 transition-all transform hover:-translate-y-1 active:scale-95"
+          >
+            Create New Recipe
+          </Link>
         </div>
       </div>
 
+      {/* Created Recipes */}
       <section>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Recipes</h2>
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Your Kitchen</h2>
+            <p className="text-gray-500 font-medium mt-1">Recipes you've shared with the world</p>
+          </div>
+        </div>
+        
         {profile.createdRecipes?.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {profile.createdRecipes.map(recipe => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 italic">You haven't created any recipes yet.</p>
+          <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+            <h3 className="text-xl font-bold text-gray-800">No recipes yet</h3>
+            <p className="text-gray-500 mt-2 font-medium">Start your culinary journey by sharing your first recipe!</p>
+            <Link to="/add-recipe" className="inline-block mt-6 text-orange-500 font-black hover:underline">
+              Get cooking →
+            </Link>
+          </div>
         )}
       </section>
 
+      {/* Favorite Recipes */}
       <section>
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Favorite Recipes</h2>
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Saved Favorites</h2>
+            <p className="text-gray-500 font-medium mt-1">Your personal collection of taste</p>
+          </div>
+        </div>
+
         {profile.favoriteRecipes?.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {profile.favoriteRecipes.map(recipe => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 italic">No favorite recipes yet.</p>
+          <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+            <h3 className="text-xl font-bold text-gray-800">No favorites saved</h3>
+            <p className="text-gray-500 mt-2 font-medium">Explore recipes and save the ones you love!</p>
+            <Link to="/" className="inline-block mt-6 text-orange-500 font-black hover:underline">
+              Explore recipes →
+            </Link>
+          </div>
         )}
       </section>
     </div>

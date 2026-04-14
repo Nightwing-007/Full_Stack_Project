@@ -41,109 +41,168 @@ const AddRecipe = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl p-8">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">Create New Recipe</h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">Recipe Title</label>
-          <input
-            type="text"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-300 focus:outline-none"
-            placeholder="e.g. Classic Margherita Pizza"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">Category</label>
-            <select
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-300 focus:outline-none"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            >
-              <option>Breakfast</option>
-              <option>Lunch</option>
-              <option>Dinner</option>
-              <option>Dessert</option>
-              <option>Snack</option>
-            </select>
+    <div className="max-w-4xl mx-auto pb-20">
+      <div className="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden relative">
+        {/* Header Decor */}
+        <div className="bg-gray-900 px-10 py-16 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+            <div className="absolute top-[-20%] left-[-10%] w-[40%] h-[60%] bg-orange-500 rounded-full blur-[100px]"></div>
           </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-2">Cooking Time (mins)</label>
-            <input
-              type="number"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-300 focus:outline-none"
-              value={formData.cookingTime}
-              onChange={(e) => setFormData({ ...formData, cookingTime: e.target.value })}
-              required
-            />
-          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-white relative z-10 tracking-tight">
+            Share Your <span className="text-orange-500">Masterpiece</span>
+          </h2>
+          <p className="text-gray-400 mt-4 font-medium relative z-10">
+            Let the world taste your culinary creativity
+          </p>
         </div>
 
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">Image URL</label>
-          <input
-            type="text"
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-300 focus:outline-none"
-            placeholder="https://images.unsplash.com/..."
-            value={formData.imageUrl}
-            onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">Ingredients</label>
-          {formData.ingredients.map((ingredient, index) => (
-            <div key={index} className="flex space-x-2 mb-2">
-              <input
-                type="text"
-                className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-300 focus:outline-none"
-                placeholder={`Ingredient ${index + 1}`}
-                value={ingredient}
-                onChange={(e) => handleIngredientChange(index, e.target.value)}
-                required
-              />
-              {formData.ingredients.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeIngredient(index)}
-                  className="bg-red-50 text-red-600 px-3 rounded-lg hover:bg-red-100"
-                >
-                  ✕
-                </button>
-              )}
+        <form onSubmit={handleSubmit} className="p-10 md:p-16 space-y-10">
+          {/* Basic Info Section */}
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4 mb-2">
+              <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-black text-gray-900">Basic Information</h3>
             </div>
-          ))}
+
+            <div className="grid grid-cols-1 gap-8">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Recipe Title</label>
+                <input
+                  type="text"
+                  required
+                  className="block w-full px-6 py-4 border border-gray-100 bg-gray-50/50 rounded-2xl text-gray-900 font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                  placeholder="e.g. Grandma's Secret Pasta Sauce"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Category</label>
+                  <select
+                    className="block w-full px-6 py-4 border border-gray-100 bg-gray-50/50 rounded-2xl text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all appearance-none"
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  >
+                    <option>Breakfast</option>
+                    <option>Lunch</option>
+                    <option>Dinner</option>
+                    <option>Dessert</option>
+                    <option>Snack</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Cooking Time (minutes)</label>
+                  <input
+                    type="number"
+                    required
+                    className="block w-full px-6 py-4 border border-gray-100 bg-gray-50/50 rounded-2xl text-gray-900 font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                    value={formData.cookingTime}
+                    onChange={(e) => setFormData({ ...formData, cookingTime: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2 ml-1">Image URL</label>
+                <input
+                  type="text"
+                  className="block w-full px-6 py-4 border border-gray-100 bg-gray-50/50 rounded-2xl text-gray-900 font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                  placeholder="Paste a link to a high-quality photo"
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-gray-100" />
+
+          {/* Ingredients Section */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-black text-gray-900">Ingredients</h3>
+              </div>
+              <button
+                type="button"
+                onClick={addIngredient}
+                className="bg-orange-50 text-orange-600 px-6 py-2.5 rounded-xl font-bold hover:bg-orange-100 transition-colors flex items-center"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" />
+                </svg>
+                Add
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {formData.ingredients.map((ingredient, index) => (
+                <div key={index} className="flex space-x-2 group">
+                  <input
+                    type="text"
+                    required
+                    className="flex-1 px-6 py-4 border border-gray-100 bg-gray-50/50 rounded-2xl text-gray-900 font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all"
+                    placeholder={`Ingredient ${index + 1}`}
+                    value={ingredient}
+                    onChange={(e) => handleIngredientChange(index, e.target.value)}
+                  />
+                  {formData.ingredients.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeIngredient(index)}
+                      className="bg-red-50 text-red-500 p-4 rounded-2xl hover:bg-red-100 transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <hr className="border-gray-100" />
+
+          {/* Instructions Section */}
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4 mb-2">
+              <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-black text-gray-900">Cooking Steps</h3>
+            </div>
+            
+            <textarea
+              required
+              className="block w-full px-6 py-6 border border-gray-100 bg-gray-50/50 rounded-[2rem] text-gray-900 font-medium placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all h-64 resize-none"
+              placeholder="Describe how to prepare this dish, step by step..."
+              value={formData.instructions}
+              onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
+            ></textarea>
+          </div>
+
           <button
-            type="button"
-            onClick={addIngredient}
-            className="text-orange-600 font-bold text-sm hover:underline mt-2"
+            type="submit"
+            className="w-full bg-gray-900 text-white text-xl font-black py-6 rounded-[2rem] hover:bg-orange-500 transition-all duration-300 shadow-2xl hover:shadow-orange-200 transform hover:-translate-y-1 active:scale-95"
           >
-            + Add Ingredient
+            Publish Recipe
           </button>
-        </div>
-
-        <div>
-          <label className="block text-gray-700 font-semibold mb-2">Instructions</label>
-          <textarea
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-300 focus:outline-none h-40"
-            placeholder="Step by step instructions..."
-            value={formData.instructions}
-            onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
-            required
-          ></textarea>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-orange-600 text-white font-bold py-4 rounded-xl hover:bg-orange-700 transition duration-300 shadow-lg"
-        >
-          Create Recipe
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

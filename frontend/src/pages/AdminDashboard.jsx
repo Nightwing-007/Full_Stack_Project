@@ -22,53 +22,111 @@ const AdminDashboard = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this recipe?')) {
+    if (window.confirm('Are you sure you want to delete this recipe? This action cannot be undone.')) {
       try {
         await api.delete(`/recipes/${id}`);
-        toast.success('Recipe deleted');
+        toast.success('Recipe deleted successfully');
         setRecipes(recipes.filter(r => r.id !== id));
       } catch (error) {
-        toast.error('Failed to delete');
+        toast.error('Failed to delete recipe');
       }
     }
   };
 
-  if (loading) return <div className="text-center py-20"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div></div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32">
+        <div className="relative w-20 h-20">
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-orange-100 rounded-full"></div>
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-orange-500 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <p className="mt-6 text-gray-400 font-bold animate-pulse">Accessing archives...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white rounded-3xl shadow-lg p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Admin Dashboard</h1>
-      <h2 className="text-xl font-bold text-gray-700 mb-4">Manage All Recipes</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="py-4 px-4 font-bold text-gray-600 uppercase text-xs">Title</th>
-              <th className="py-4 px-4 font-bold text-gray-600 uppercase text-xs">Category</th>
-              <th className="py-4 px-4 font-bold text-gray-600 uppercase text-xs">Creator</th>
-              <th className="py-4 px-4 font-bold text-gray-600 uppercase text-xs text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recipes.map(recipe => (
-              <tr key={recipe.id} className="border-b border-gray-50 hover:bg-gray-50">
-                <td className="py-4 px-4 text-gray-800 font-medium">{recipe.title}</td>
-                <td className="py-4 px-4">
-                  <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">{recipe.category}</span>
-                </td>
-                <td className="py-4 px-4 text-gray-600 text-sm">{recipe.creatorName}</td>
-                <td className="py-4 px-4 text-right">
-                  <button
-                    onClick={() => handleDelete(recipe.id)}
-                    className="text-red-500 hover:text-red-700 font-bold text-sm"
-                  >
-                    Delete
-                  </button>
-                </td>
+    <div className="space-y-10 pb-20">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-black text-gray-900 tracking-tight">Admin <span className="text-orange-500">Control</span></h1>
+          <p className="text-gray-500 font-medium mt-1">Manage and moderate all platform content</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100">
+            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest block">Total Recipes</span>
+            <span className="text-2xl font-black text-gray-900">{recipes.length}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-900">
+                <th className="py-6 px-8 font-black text-white uppercase text-xs tracking-widest">Recipe Details</th>
+                <th className="py-6 px-8 font-black text-white uppercase text-xs tracking-widest">Category</th>
+                <th className="py-6 px-8 font-black text-white uppercase text-xs tracking-widest">Creator</th>
+                <th className="py-6 px-8 font-black text-white uppercase text-xs tracking-widest text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {recipes.map((recipe, index) => (
+                <tr key={recipe.id} className="hover:bg-orange-50/30 transition-colors group">
+                  <td className="py-6 px-8">
+                    <div className="flex items-center space-x-4">
+                      <div className="h-12 w-12 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                        <img 
+                          src={recipe.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=80"} 
+                          alt="" 
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <span className="text-gray-900 font-bold text-lg group-hover:text-orange-600 transition-colors">{recipe.title}</span>
+                    </div>
+                  </td>
+                  <td className="py-6 px-8">
+                    <span className="px-4 py-1.5 bg-gray-100 text-gray-600 text-xs font-black uppercase rounded-full tracking-wider">
+                      {recipe.category}
+                    </span>
+                  </td>
+                  <td className="py-6 px-8">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-[10px] font-black">
+                        {recipe.creatorName?.charAt(0) || 'U'}
+                      </div>
+                      <span className="text-gray-600 font-bold">{recipe.creatorName}</span>
+                    </div>
+                  </td>
+                  <td className="py-6 px-8 text-right">
+                    <button
+                      onClick={() => handleDelete(recipe.id)}
+                      className="inline-flex items-center px-4 py-2 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-500 hover:text-white transition-all duration-200"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {recipes.length === 0 && (
+            <div className="py-20 text-center">
+              <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">No records found</h3>
+              <p className="text-gray-500 font-medium">The platform is currently empty.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
