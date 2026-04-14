@@ -5,11 +5,17 @@ import RecipeCard from '../components/RecipeCard';
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
   const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('All');
   const [loading, setLoading] = useState(true);
 
   const fetchRecipes = async () => {
     try {
-      const response = await api.get(`/recipes?search=${search}`);
+      setLoading(true);
+      let url = `/recipes?search=${search}`;
+      if (category !== 'All') {
+        url += `&category=${category}`;
+      }
+      const response = await api.get(url);
       setRecipes(response.data.content);
     } catch (error) {
       console.error('Error fetching recipes', error);
@@ -24,7 +30,7 @@ const Home = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [search]);
+  }, [search, category]);
 
   return (
     <div className="space-y-12 pb-20">
@@ -72,8 +78,8 @@ const Home = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4 px-2">
           <div>
             <h2 className="text-3xl font-black text-gray-900 tracking-tight">
-              {search ? (
-                <span>Found <span className="text-orange-500">{recipes.length}</span> results for "{search}"</span>
+              {search || category !== 'All' ? (
+                <span>Found <span className="text-orange-500">{recipes.length}</span> results {search && `for "${search}"`} {category !== 'All' && `in ${category}`}</span>
               ) : (
                 "Featured Recipes"
               )}
@@ -84,11 +90,12 @@ const Home = () => {
           </div>
           
           <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-            {['All', 'Breakfast', 'Lunch', 'Dinner', 'Dessert'].map((cat) => (
+            {['All', 'Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack'].map((cat) => (
               <button 
                 key={cat}
-                className={`px-6 py-2 rounded-xl font-bold text-sm transition-all duration-200 ${
-                  (cat === 'All' && !search) ? 'bg-orange-500 text-white shadow-lg shadow-orange-100' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
+                onClick={() => setCategory(cat)}
+                className={`px-6 py-2 rounded-xl font-bold text-sm transition-all duration-200 whitespace-nowrap ${
+                  category === cat ? 'bg-orange-500 text-white shadow-lg shadow-orange-100' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
                 }`}
               >
                 {cat}

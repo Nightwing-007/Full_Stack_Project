@@ -20,10 +20,11 @@ public class RecipeController {
     @GetMapping
     public ResponseEntity<Page<RecipeDto>> getAllRecipes(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(recipeService.getAllRecipes(search, page, size));
+        return ResponseEntity.ok(recipeService.getAllRecipes(search, category, page, size));
     }
 
     @GetMapping("/{id}")

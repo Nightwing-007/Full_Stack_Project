@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Page<Recipe> findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(String title, String category, Pageable pageable);
+    Page<Recipe> findByCategoryIgnoreCase(String category, Pageable pageable);
+    Page<Recipe> findByCategoryIgnoreCaseAndTitleContainingIgnoreCase(String category, String title, Pageable pageable);
 }

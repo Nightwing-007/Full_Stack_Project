@@ -24,11 +24,19 @@ public class RecipeService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<RecipeDto> getAllRecipes(String search, int page, int size) {
+    public Page<RecipeDto> getAllRecipes(String search, String category, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Recipe> recipes;
-        if (search != null && !search.isEmpty()) {
+        
+        boolean hasSearch = search != null && !search.isEmpty();
+        boolean hasCategory = category != null && !category.isEmpty() && !category.equalsIgnoreCase("All");
+
+        if (hasSearch && hasCategory) {
+            recipes = recipeRepository.findByCategoryIgnoreCaseAndTitleContainingIgnoreCase(category, search, pageable);
+        } else if (hasSearch) {
             recipes = recipeRepository.findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(search, search, pageable);
+        } else if (hasCategory) {
+            recipes = recipeRepository.findByCategoryIgnoreCase(category, pageable);
         } else {
             recipes = recipeRepository.findAll(pageable);
         }
